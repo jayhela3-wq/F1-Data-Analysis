@@ -5,7 +5,7 @@ import plotly.express as px
 df = preprocessor.preprocess()
 
 st.sidebar.title("Formula-1 Dashboard")
-st.sidebar.image('C:/Users/joyhela/F1_DataAnalysis/f1_logo.png')
+st.sidebar.image('C:/Users/joyhela/F1_DataAnalysis/logo.png',use_container_width=True)
 
 user_menu = st.sidebar.radio(
     "Select an Option",
