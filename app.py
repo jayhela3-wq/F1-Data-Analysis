@@ -139,6 +139,7 @@ if user_menu == "Driver Comparison":
     )
 
     st.plotly_chart(fig)
+
 if user_menu == "Heatmap":
     st.title("Constructor Dominance Heatmap")
 
