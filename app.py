@@ -1,11 +1,13 @@
 import streamlit as st
 import preprocessor
 import plotly.express as px
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 df = preprocessor.preprocess()
 
 st.sidebar.title("Formula-1 Dashboard")
-st.sidebar.image('C:/Users/joyhela/F1_DataAnalysis/logo.png',use_container_width=True)
+st.sidebar.image('C:/Users/joyhela/F1_DataAnalysis/logo.png',width='stretch')
 
 user_menu = st.sidebar.radio(
     "Select an Option",
@@ -13,7 +15,8 @@ user_menu = st.sidebar.radio(
         "Home",
         "Top Drivers",
         "Top Constructors",
-        "Driver Comparison"
+        "Driver Comparison",
+        "Heatmap"
     )
 )
 
@@ -38,6 +41,25 @@ if user_menu == "Home" :
 
     with col4:
         st.metric("Total Races",total_races)
+
+    races_per_year = df.groupby('Year')['Race_Name'].nunique().reset_index()
+    fig1 = px.line(
+        races_per_year, x = 'Year', y = 'Race_Name', markers = True, title = 'Number of Races Over Years'
+    )
+    st.plotly_chart(fig1)
+
+    drivers_per_year = df.groupby('Year')['Driver'].nunique().reset_index()
+    fig2 = px.line(
+        drivers_per_year, x = 'Year', y = 'Driver', markers = True, title = 'Numbers of Drivers Over Years'
+    )
+    st.plotly_chart(fig2)
+
+    constructors_per_year = df.groupby('Year')['Constructor'].nunique().reset_index()
+    fig3 = px.line(
+        constructors_per_year, x = 'Year', y = 'Constructor', markers = True, title = 'Number of Constructors Over Years'
+    )
+    st.plotly_chart(fig3)
+
 
 
 
@@ -117,3 +139,36 @@ if user_menu == "Driver Comparison":
     )
 
     st.plotly_chart(fig)
+if user_menu == "Heatmap":
+    st.title("Constructor Dominance Heatmap")
+
+    winners = df[df['Position'] == 1]
+
+    latest_year = df['Year'].max()
+    winners = winners[winners['Year'] >= latest_year-19]
+
+    top_teams = winners['Constructor'].value_counts().head(10).index
+    winners = winners[winners['Constructor'].isin(top_teams)]
+
+
+
+    heatmap_data = winners.pivot_table(
+        index = 'Constructor',
+        columns = 'Year',
+        aggfunc = 'size',
+        fill_value = 0
+
+    )
+    fig, ax = plt.subplots(figsize=(18,6))
+
+    sns.heatmap(
+        heatmap_data,
+        cmap = 'rocket_r',
+        linewidths = 0.5,
+        ax = ax
+    )
+
+
+    plt.xticks(rotation = 45)
+
+    st.pyplot(fig)
