@@ -13,7 +13,7 @@ st.title("🏎️ Formula-1 Data Analysis")
 
 
 st.sidebar.title("Formula-1 Dashboard")
-st.sidebar.image('C:/Users/joyhela/F1_DataAnalysis/logo.png',width='stretch')
+st.sidebar.image('logo.png',width='stretch')
 
 user_menu = st.sidebar.radio(
     "Select an Option",
