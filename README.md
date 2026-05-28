@@ -51,6 +51,7 @@ streamlit run app.py
 
 ## 🌐 Live Demo
 
+https://f1-data-analysis-jay0609.streamlit.app/
 
 
 ## 👨‍💻 Author
