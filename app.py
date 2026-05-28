@@ -3,8 +3,14 @@ import preprocessor
 import plotly.express as px
 import matplotlib.pyplot as plt
 import seaborn as sns
+import pickle 
+import numpy as np
 
 df = preprocessor.preprocess()
+
+
+st.title("🏎️ Formula-1 Data Analysis")
+
 
 st.sidebar.title("Formula-1 Dashboard")
 st.sidebar.image('C:/Users/joyhela/F1_DataAnalysis/logo.png',width='stretch')
@@ -16,20 +22,21 @@ user_menu = st.sidebar.radio(
         "Top Drivers",
         "Top Constructors",
         "Driver Comparison",
-        "Heatmap"
+        "Heatmap",
+        "Prediction"
     )
 )
 
 if user_menu == "Home" :
-    st.title("Formula-1 Data Analysis")
+
 
     total_seasons = df['Year'].nunique()
     total_drivers = df['Driver'].nunique()
     total_constructors = df['Constructor'].nunique()
     total_races = df['Race_Name'].nunique()
-
+    
     col1,col2,col3,col4 = st.columns(4)
-
+    
     with col1:
         st.metric("Total Seasons",total_seasons)
 
@@ -173,3 +180,45 @@ if user_menu == "Heatmap":
     plt.xticks(rotation = 45)
 
     st.pyplot(fig)
+
+
+if user_menu == "Prediction":
+    st.title("Winner Prediction")
+
+    model = pickle.load(open('model.pkl', 'rb'))
+
+    le_driver = pickle.load(open('label_encoder_driver.pkl', 'rb'))
+    le_constructor = pickle.load(open('label_encoder_constructor.pkl', 'rb'))
+    le_circuit = pickle.load(open('label_encoder_circuit.pkl', 'rb'))
+
+    driver = st.selectbox("Select driver", le_driver.classes_)
+    constructor = st.selectbox("Select Constructor", le_constructor.classes_)
+    circuit = st.selectbox("Select Circuit", le_circuit.classes_)
+
+    year = st.slider(
+        "Select Year",
+        2000,
+        2024,
+        2024
+    )
+
+    grid = st.slider(
+        "Grid Position",
+        1,
+        20,
+        1
+    )
+
+
+    if st.button("Predict Winner"):
+
+        driver_encoded = le_driver.transform([driver])[0]
+        constructor_encoded = le_constructor.transform([constructor])[0]        
+        circuit_encoded = le_circuit.transform([circuit])[0]    
+
+        prediction = model.predict([[driver_encoded, constructor_encoded, year, circuit_encoded, grid]])
+
+        if prediction[0] == 1:
+            st.success("Chances of wining is high!")
+        else:   
+            st.error("Chances of winning is low!")

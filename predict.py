@@ -44,10 +44,12 @@ ml_df.columns = [
 print(ml_df.head())
 
 le_driver = LabelEncoder()
+le_constructor = LabelEncoder()
+le_circuit = LabelEncoder()
 
-ml_df['Driver'] = le.fit_transform(ml_df['Driver'])
-ml_df['Constructor'] = le.fit_transform(ml_df['Constructor'])   
-ml_df['Circuit'] = le.fit_transform(ml_df['Circuit'])
+ml_df['Driver'] = le_driver.fit_transform(ml_df['Driver'])
+ml_df['Constructor'] = le_constructor.fit_transform(ml_df['Constructor'])   
+ml_df['Circuit'] = le_circuit.fit_transform(ml_df['Circuit'])
 
 x = ml_df.drop('Win', axis=1)
 y = ml_df['Win']
@@ -63,6 +65,8 @@ accuracy = accuracy_score(y_test, predict)
 print("Accuracy: ", accuracy)
 
 pickle.dump(model, open('model.pkl', 'wb'))
-pickle.dump(le, open('label_encoder.pkl', 'wb'))
+pickle.dump(le_driver, open('label_encoder_driver.pkl', 'wb'))
+pickle.dump(le_constructor, open('label_encoder_constructor.pkl', 'wb'))
+pickle.dump(le_circuit, open('label_encoder_circuit.pkl', 'wb'))    
 
 print('Model saved')
